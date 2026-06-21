@@ -103,7 +103,7 @@ const CreateUser = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center px-4 py-2">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-4 sm:p-5">
-        <h1 className="text-2xl font-bold text-center mb-1">Create User Account</h1>
+        <h1 className="text-2xl font-bold text-center mb-6">Create User Account</h1>
 
         <form className="space-y-3.5" onSubmit={handleCreateUser}>
           <div className="flex justify-center">
@@ -196,15 +196,6 @@ const CreateUser = () => {
               "Create User"
             )}
           </button>
-
-          <p className="text-center text-xs sm:text-sm text-gray-500">
-            Already have an account?{" "}
-            <Link to="/">
-              <span className="text-blue-600 cursor-pointer font-medium">
-                Sign In
-              </span>
-            </Link>
-          </p>
         </form>
       </div>
     </div>

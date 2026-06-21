@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [loader, setLoader] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const getAllUsers = async () => {
     try {
       setLoader(true);
@@ -24,15 +25,17 @@ const Home = () => {
   useEffect(() => {
     getAllUsers();
   }, []);
-  const handleLogout = ()=>{
-    sessionStorage.clear()
-    navigate('/')
-  }
+  const handleLogout = () => {
+    sessionStorage.clear();
+    navigate("/");
+  };
   return (
     <div className="min-h-screen bg-gray-100 p-3 sm:p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4 sm:mb-6 flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-center sm:justify-between">
-          <h1 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">Users Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">
+            Users Management
+          </h1>
 
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Link to="/createUser">
@@ -42,7 +45,7 @@ const Home = () => {
             </Link>
 
             <button
-              onClick={handleLogout}
+              onClick={() => setShowLogoutModal(true)}
               className="cursor-pointer w-full sm:w-auto bg-red-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-red-700"
             >
               Logout
@@ -142,6 +145,33 @@ const Home = () => {
           </div>
         </div>
       </div>
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 animate-in fade-in zoom-in duration-200">
+            <h2 className="text-xl font-bold text-center mb-2">Logout</h2>
+
+            <p className="text-gray-600 text-center mb-6">
+              Are you sure you want to logout?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="cursor-pointer flex-1 py-2.5 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="cursor-pointer flex-1 py-2.5 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+              >
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

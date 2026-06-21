@@ -5,10 +5,10 @@ const Signup = () => {
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState({
-    name: "Rushikesh Arote",
-    email: "rushikesharote14@gmail.com",
-    phone: "9324004785",
-    password: "Rushi@07",
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
     profile_image: "",
   });
 

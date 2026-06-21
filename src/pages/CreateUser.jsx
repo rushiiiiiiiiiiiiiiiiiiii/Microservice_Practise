@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 const CreateUser = () => {
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState({
-    name: "Akshay Arote",
-    email: "akshay@gmail.com",
-    phone: "9324004885",
-    password: "Akshay@07",
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
     profile_image: "",
   });
 

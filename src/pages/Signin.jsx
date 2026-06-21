@@ -6,8 +6,8 @@ const Signin = () => {
     const Navigate = useNavigate()
     const [loader, setLoader] = useState(false)
     const [data, setData] = useState({
-        email:"rushikesharote14@gmail.com",
-        password:"Rushi@07"
+        email:"",
+        password:""
     })
 
     const getData = (e)=>{

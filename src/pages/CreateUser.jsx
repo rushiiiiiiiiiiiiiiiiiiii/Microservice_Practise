@@ -90,7 +90,7 @@ const CreateUser = () => {
       );
       console.log(resData.data.status);
       if (resData.data.status) {
-        navigate("/");
+        navigate("/home");
       }
       console.log(resData);
     } catch (err) {

@@ -7,6 +7,8 @@ const Home = () => {
   const [data, setData] = useState([]);
   const [loader, setLoader] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState("");
   const getAllUsers = async () => {
     try {
       setLoader(true);
@@ -28,6 +30,21 @@ const Home = () => {
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/");
+  };
+  const handleDelte = async (email) => {
+    console.log(email);
+    try {
+      const res = await axios.post(
+        "https://emc6g4olt5.execute-api.ap-south-1.amazonaws.com/uat/practise/deleteUser",
+        {
+          email: email,
+        },
+      );
+      console.log(res);
+      getAllUsers();
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <div className="min-h-screen bg-gray-100 p-3 sm:p-4 md:p-6">
@@ -132,7 +149,13 @@ const Home = () => {
                             Update
                           </button>
 
-                          <button className="cursor-pointer text-sm bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700">
+                          <button
+                            onClick={() => {
+                              setSelectedEmail(user.email);
+                              setShowDeleteModal(true);
+                            }}
+                            className="cursor-pointer text-sm bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700"
+                          >
                             Delete
                           </button>
                         </div>
@@ -167,6 +190,40 @@ const Home = () => {
                 className="cursor-pointer flex-1 py-2.5 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
               >
                 Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 animate-in fade-in zoom-in duration-200">
+            <h2 className="text-xl font-bold text-center mb-2">Delete User</h2>
+
+            <p className="text-gray-600 text-center mb-6">
+              Are you sure you want to delete this user?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setSelectedEmail("");
+                }}
+                className="cursor-pointer flex-1 py-2.5 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={async () => {
+                  await handleDelte(selectedEmail);
+                  setShowDeleteModal(false);
+                  setSelectedEmail("");
+                }}
+                className="cursor-pointer flex-1 py-2.5 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+              >
+                Yes, Delete
               </button>
             </div>
           </div>

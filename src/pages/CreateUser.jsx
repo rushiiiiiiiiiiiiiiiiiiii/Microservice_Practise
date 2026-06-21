@@ -1,8 +1,10 @@
-import  { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import {  useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaPlus } from "react-icons/fa";
 const CreateUser = () => {
   const navigate = useNavigate();
+  const [preview, setPreview] = useState(null);
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState({
     name: "",
@@ -14,10 +16,19 @@ const CreateUser = () => {
 
   const getData = (e) => {
     const { name, value, files } = e.target;
-    setData({
-      ...data,
-      [name]: files ? files[0] : value,
-    });
+
+    if (files) {
+      setData({
+        ...data,
+        [name]: files[0],
+      });
+      setPreview(URL.createObjectURL(files[0]));
+    } else {
+      setData({
+        ...data,
+        [name]: files ? files[0] : value,
+      });
+    }
   };
 
   const handleCreateUser = async (e) => {
@@ -69,17 +80,17 @@ const CreateUser = () => {
     console.log("hii");
     console.log(imageKey);
     try {
-      const signupData = {
+      const CreateUserData = {
         ...data,
         profile_image: imageKey,
       };
       const resData = await axios.post(
         "https://emc6g4olt5.execute-api.ap-south-1.amazonaws.com/uat/practise/singup",
-        signupData,
+        CreateUserData,
       );
       console.log(resData.data.status);
       if (resData.data.status) {
-        navigate("/home");
+        navigate("/");
       }
       console.log(resData);
     } catch (err) {
@@ -90,76 +101,91 @@ const CreateUser = () => {
     }
   };
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-center mb-6">Create User Account</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center px-4 py-2">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-4 sm:p-5">
+        <h1 className="text-2xl font-bold text-center mb-1">Create User Account</h1>
 
-        <form className="space-y-5" onSubmit={handleCreateUser}>
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Profile Image
+        <form className="space-y-3.5" onSubmit={handleCreateUser}>
+          <div className="flex justify-center">
+            <label className="relative cursor-pointer">
+              <input
+                type="file"
+                name="profile_image"
+                accept="image/*"
+                onChange={getData}
+                className="hidden"
+              />
+
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-dashed border-gray-300 overflow-hidden flex items-center justify-center bg-gray-100 hover:bg-gray-200 transition">
+                {preview ? (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <FaPlus className="text-3xl text-gray-500" />
+                )}
+              </div>
+
+              <div className="absolute bottom-1 right-1 bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg">
+                <FaPlus size={12} />
+              </div>
             </label>
-            <input
-              type="file"
-              name="profile_image"
-              accept="image/*"
-              onChange={getData}
-              className="w-full border border-gray-300 rounded-lg p-2 cursor-pointer"
-            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Name</label>
+            <label className="block text-sm font-medium mb-1">Name</label>
             <input
               type="text"
               name="name"
               onChange={getData}
               value={data.name}
               placeholder="Enter your name"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
+            <label className="block text-sm font-medium mb-1">Email</label>
             <input
               type="email"
               name="email"
               onChange={getData}
               value={data.email}
               placeholder="Enter your email"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Phone</label>
+            <label className="block text-sm font-medium mb-1">Phone</label>
             <input
               type="tel"
               name="phone"
               onChange={getData}
               value={data.phone}
               placeholder="Enter your phone number"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Password</label>
+            <label className="block text-sm font-medium mb-1">Password</label>
             <input
               type="password"
               name="password"
               onChange={getData}
               value={data.password}
               placeholder="Enter your password"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <button
             type="submit"
             disabled={loader}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-70 flex items-center justify-center gap-3"
+            className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-70 flex items-center justify-center gap-3"
           >
             {loader ? (
               <>
@@ -170,6 +196,15 @@ const CreateUser = () => {
               "Create User"
             )}
           </button>
+
+          <p className="text-center text-xs sm:text-sm text-gray-500">
+            Already have an account?{" "}
+            <Link to="/">
+              <span className="text-blue-600 cursor-pointer font-medium">
+                Sign In
+              </span>
+            </Link>
+          </p>
         </form>
       </div>
     </div>

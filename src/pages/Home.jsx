@@ -1,40 +1,53 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate()
   const [data, setData] = useState([]);
-  const [loader, setLoader] = useState(false)
+  const [loader, setLoader] = useState(false);
   const getAllUsers = async () => {
     try {
-      setLoader(true)
+      setLoader(true);
       const res = await axios.get(
         "https://emc6g4olt5.execute-api.ap-south-1.amazonaws.com/uat/practise/getAllUser",
       );
       setData(res.data.data);
       console.log(res.data.data);
     } catch (err) {
-      setLoader(false)
+      setLoader(false);
       console.log(err);
-    }
-    finally{
-      setLoader(false)
+    } finally {
+      setLoader(false);
     }
   };
   useEffect(() => {
     getAllUsers();
   }, []);
+  const handleLogout = ()=>{
+    sessionStorage.clear()
+    navigate('/')
+  }
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-xl shadow-md p-6 mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold">Users Management</h1>
 
-          <Link to="/createUser">
-            <button className="cursor-pointer bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700">
-              Add User
+          <div className="flex gap-3">
+            <Link to="/createUser">
+              <button className="cursor-pointer bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700">
+                Add User
+              </button>
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="cursor-pointer bg-red-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-red-700"
+            >
+              Logout
             </button>
-          </Link>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-md overflow-hidden">

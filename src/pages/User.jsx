@@ -69,14 +69,14 @@ const User = () => {
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-wrap justify-center gap-4 mt-10">
-            <button className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition">
+          <div className="flex flex-wrap justify-start gap-4 mt-10">
+            {/* <button className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition">
               Update User
             </button>
 
             <button className="cursor-pointer bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition">
               Delete User
-            </button>
+            </button> */}
 
             <Link to='/home'><button className="cursor-pointer bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition">
               Back

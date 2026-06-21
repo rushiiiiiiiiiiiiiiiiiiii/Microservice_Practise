@@ -23,9 +23,10 @@ const Signin = () => {
         console.log("Hiii")
         try{
             const res = await axios.post('https://emc6g4olt5.execute-api.ap-south-1.amazonaws.com/uat/practise/signin', data)
-            console.log(res.data)
+            const token = res.data.token
             console.log(res.data.status)
             if(res.data.status){
+                sessionStorage.setItem("token", token)
                 Navigate('/home')
             }
         }
@@ -74,18 +75,6 @@ const Signin = () => {
               placeholder="Enter your password"
               className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
-
-          {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" />
-              Remember me
-            </label>
-
-            <span className="text-blue-600 cursor-pointer hover:underline">
-              Forgot Password?
-            </span>
           </div>
 
           {/* Sign In Button */}

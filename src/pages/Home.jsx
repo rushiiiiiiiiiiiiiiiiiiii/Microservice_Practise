@@ -144,10 +144,11 @@ const Home = () => {
                               View
                             </button>
                           </Link>
-
+                          <Link to={`/update/${user.email}`}>
                           <button className="cursor-pointer text-sm bg-yellow-500 text-white px-3 py-2 rounded-lg hover:bg-yellow-600">
                             Update
                           </button>
+                          </Link>
 
                           <button
                             onClick={() => {

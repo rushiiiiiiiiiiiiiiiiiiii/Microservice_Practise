@@ -5,12 +5,15 @@ import Home from "./pages/Home";
 import CreateUser from "./pages/CreateUser";
 import User from "./pages/User";
 import ProtectedRoutes from "./pages/ProtectedRoutes";
+// import Aadhar from "./pages/Aadhar";
+import Update from "./pages/Update";
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
           <Route path="/signup" element={<Signup />} />
+          {/* <Route path="/" element={<Aadhar />} /> */}
           <Route path="/" element={<Signin />} />
 
           <Route
@@ -36,6 +39,14 @@ function App() {
             element={
               <ProtectedRoutes>
                 <User />
+              </ProtectedRoutes>
+            }
+          />
+          <Route
+            path="/update/:email"
+            element={
+              <ProtectedRoutes>
+                <Update />
               </ProtectedRoutes>
             }
           />

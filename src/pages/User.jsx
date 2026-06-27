@@ -1,86 +1,238 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
-const User = () => {
+const Update = () => {
   const { email } = useParams();
-  console.log(email);
-  const [data, setData] = useState({});
-  const getAllUsers = async () => {
+  const navigate = useNavigate();
+
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+  const [imageKey, setImageKey] = useState("");
+  const [file, setFile] = useState(null);
+
+  const [loader, setLoader] = useState(false);
+
+  const getUser = async () => {
     try {
       const res = await axios.post(
-        "https://emc6g4olt5.execute-api.ap-south-1.amazonaws.com/uat/practise/getUser",{"email":email}
+        "https://emc6g4olt5.execute-api.ap-south-1.amazonaws.com/uat/practise/getUser",
+        {
+          email,
+        }
       );
-      setData(res.data.data);
-      console.log(res.data.data);
+
+      const user = res.data.data;
+
+      setName(user.name);
+      setPhone(user.phone);
+      setProfileImage(user.profile_image);
+      setImageKey(user.profile_image_key);
     } catch (err) {
       console.log(err);
     }
   };
-  useEffect(() => {
-    getAllUsers();
-  }, []);
-  return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
-        {/* Header */}
-        <div className="bg-blue-600 h-32 relative">
-          <img
-            src={data.profile_image}
-            alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-white object-cover absolute left-1/2 -bottom-16 -translate-x-1/2"
-          />
-        </div>
 
-        {/* User Details */}
-        <div className="pt-20 pb-8 px-8">
-          <h1 className="text-3xl font-bold text-center text-gray-800">
-            {data.name}
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      setFile(selectedFile);
+
+      // Preview image
+      setProfileImage(
+        URL.createObjectURL(selectedFile)
+      );
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      setLoader(true);
+
+      let updatedImageKey = imageKey;
+
+      if (file) {
+        const uploadRes = await axios.post(
+          "https://emc6g4olt5.execute-api.ap-south-1.amazonaws.com/uat/practise/generate_s3_upload_url",
+          {
+            contentType: file.type,
+          }
+        );
+
+        updatedImageKey =
+          uploadRes.data.data.imageKey;
+
+        await axios.put(
+          uploadRes.data.data.uploadUrl,
+          file,
+          {
+            headers: {
+              "Content-Type": file.type,
+            },
+          }
+        );
+      }
+
+      await axios.post(
+        "https://emc6g4olt5.execute-api.ap-south-1.amazonaws.com/uat/practise/update_user",
+        {
+          name,
+          email,
+          phone,
+          password,
+          profile_image: updatedImageKey,
+        }
+      );
+
+      alert("User Updated Successfully");
+
+      navigate("/home");
+    } catch (err) {
+      console.log(err);
+      alert("Update Failed");
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 flex items-center justify-center p-4">
+
+      <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden">
+
+        {/* Header */}
+
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white text-center">
+          <h1 className="text-3xl font-bold">
+            Update User
           </h1>
 
-          <p className="text-center text-gray-500 mt-2">Software Developer</p>
+          <p className="text-blue-100 mt-2">
+            Modify your profile information
+          </p>
+        </div>
 
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="font-medium text-gray-800">
-                {data.email}
-              </p>
-            </div>
+        <div className="p-6 space-y-5">
 
-            <div>
-              <p className="text-sm text-gray-500">Phone</p>
-              <p className="font-medium text-gray-800">{data.phone}</p>
-            </div>
+          {/* Image */}
 
-            <div>
-              <p className="text-sm text-gray-500">User ID</p>
-              <p className="font-medium text-gray-800 break-all">
-                {data.id}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm text-gray-500">Status</p>
-              <span className="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                Active
-              </span>
+          <div className="flex justify-center">
+            <div className="relative">
+              <img
+                src={profileImage}
+                alt="profile"
+                className="w-36 h-36 rounded-full border-4 border-blue-500 object-cover shadow-lg"
+              />
             </div>
           </div>
 
+          {/* Email */}
+
+          <div>
+            <label className="font-medium text-gray-700">
+              Email
+            </label>
+
+            <input
+              value={email}
+              disabled
+              className="w-full border bg-gray-100 p-3 rounded-lg mt-1"
+            />
+          </div>
+
+          {/* Name */}
+
+          <div>
+            <label className="font-medium text-gray-700">
+              Name
+            </label>
+
+            <input
+              value={name}
+              onChange={(e) =>
+                setName(e.target.value)
+              }
+              className="w-full border p-3 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          {/* Phone */}
+
+          <div>
+            <label className="font-medium text-gray-700">
+              Phone
+            </label>
+
+            <input
+              value={phone}
+              onChange={(e) =>
+                setPhone(e.target.value)
+              }
+              className="w-full border p-3 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          {/* Password */}
+
+          <div>
+            <label className="font-medium text-gray-700">
+              New Password
+            </label>
+
+            <input
+              type="password"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
+              placeholder="Enter new password"
+              className="w-full border p-3 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          {/* File Upload */}
+
+          <div>
+            <label className="font-medium text-gray-700">
+              Change Profile Image
+            </label>
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full mt-2 border p-2 rounded-lg"
+            />
+          </div>
+
           {/* Buttons */}
-          <div className="flex flex-wrap justify-start gap-4 mt-10">
-            {/* <button className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium transition">
-              Update User
+
+          <div className="flex gap-3 pt-3">
+
+            <button
+              onClick={() => navigate("/home")}
+              className="w-1/2 py-3 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+            >
+              Cancel
             </button>
 
-            <button className="cursor-pointer bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition">
-              Delete User
-            </button> */}
+            <button
+              disabled={loader}
+              onClick={handleUpdate}
+              className="w-1/2 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+            >
+              {loader
+                ? "Updating..."
+                : "Update User"}
+            </button>
 
-            <Link to='/home'><button className="cursor-pointer bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition">
-              Back
-            </button></Link>
           </div>
         </div>
       </div>
@@ -88,4 +240,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default Update;
